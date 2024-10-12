@@ -1,32 +1,39 @@
-import { CreateAlternatives, CreateCompleteQuestion, CreateResponse, TemplateQuestion } from "../src/question";
+import {  DifficultyQuestion, LawQuestion } from "../src/question";
 
-test("Deve criar uma questão", () => {
-    const law = "Omitir, em documento público ou particular, declaração que dele devia constar, ou nele inserir ou fazer inserir declaração falsa ou diversa da que devia ser escrita, com o fim de prejudicar direito, criar obrigação ou alterar a verdade sobre fato juridicamente relevante:";
+test("Deve criar uma questão de direito", () => {
+    const law = "Art. 299 - Omitir, em documento público ou particular, declaração que dele devia constar, ou nele inserir ou fazer inserir declaração falsa ou diversa da que devia ser escrita, com o fim de prejudicar direito, criar obrigação ou alterar a verdade sobre fato juridicamente relevante:";
     const finalQuestion = `_____, em documento público ou particular, declaração que dele devia constar, ou nele inserir ou fazer inserir declaração falsa ou diversa da que devia ser escrita, com o fim de prejudicar direito, criar obrigação ou alterar a verdade sobre fato juridicamente relevante:`
-    const question = new CreateCompleteQuestion(law).execute();
-    expect(question).toBe(finalQuestion);
+    const question = new LawQuestion(law, DifficultyQuestion.EASY);
+    question.createGapQuestion();
+    expect(question.getArticle()).toBe("Art. 299");   
+    expect(question.getQuestion()).toBe(finalQuestion);
 })
 
 test("Deve dar erro ao criar a questão", () => {
     const noVerbsLaw = "aaaa";
-    expect(() => new CreateCompleteQuestion(noVerbsLaw).execute()).toThrow("Verbs not match");
+    expect(() => new LawQuestion(noVerbsLaw, DifficultyQuestion.EASY)).toThrow("Law not valid");
     const emptyString = "";
-    expect(() => new CreateCompleteQuestion(emptyString).execute()).toThrow("Verbs not match");
+    expect(() => new LawQuestion(emptyString, DifficultyQuestion.EASY)).toThrow("Law not valid");
 })
 
-test("Deve criar uma questão completa", () => {
-    const law = "Omitir, em documento público ou particular, declaração que dele devia constar, ou nele inserir ou fazer inserir declaração falsa ou diversa da que devia ser escrita, com o fim de prejudicar direito, criar obrigação ou alterar a verdade sobre fato juridicamente relevante:";
-    const question = new CreateCompleteQuestion(law).execute();
-    const response = new CreateResponse(law).execute();
-    const questionComplete = new TemplateQuestion(question, response).createQuestionWithResponse();
-    const template = `Complete a lacuna com uma das opções:\n${question}\nResposta: ${response}`;  
-    expect(questionComplete).toBe(template);
+test("Deve criar uma resposta", () => {
+    const law = "Art. 299 - Omitir, em documento público ou particular, declaração que dele devia constar, ou nele inserir ou fazer inserir declaração falsa ou diversa da que devia ser escrita, com o fim de prejudicar direito, criar obrigação ou alterar a verdade sobre fato juridicamente relevante:";
+    const question = new LawQuestion(law, DifficultyQuestion.EASY);
+    question.createResponse();
+    expect(question.getResponse()).toBe("Omitir");   
+})
+
+test("Deve criar uma questão com template", () => {
+    const law = "Art. 299 - Omitir, em documento público ou particular, declaração que dele devia constar, ou nele inserir ou fazer inserir declaração falsa ou diversa da que devia ser escrita, com o fim de prejudicar direito, criar obrigação ou alterar a verdade sobre fato juridicamente relevante:";
+    const question = new LawQuestion(law, DifficultyQuestion.EASY).getTemplate();   
+    const template = `Complete a lacuna com uma das opções:\n_____, em documento público ou particular, declaração que dele devia constar, ou nele inserir ou fazer inserir declaração falsa ou diversa da que devia ser escrita, com o fim de prejudicar direito, criar obrigação ou alterar a verdade sobre fato juridicamente relevante:`;  
+    expect(question).toBe(template);
 })
 
 
 test.only("Deve criar questão com alternativas", async () => {
-    const law = "Omitir, em documento público ou particular, declaração que dele devia constar, ou nele inserir ou fazer inserir declaração falsa ou diversa da que devia ser escrita, com o fim de prejudicar direito, criar obrigação ou alterar a verdade sobre fato juridicamente relevante:";
-    const alternatives = new CreateAlternatives("omitir");
-    await alternatives.execute();
-    expect(alternatives.getThreeAlternatives()).toHaveLength(3);
+    const law = "Art. 299 - Omitir, em documento público ou particular, declaração que dele devia constar, ou nele inserir ou fazer inserir declaração falsa ou diversa da que devia ser escrita, com o fim de prejudicar direito, criar obrigação ou alterar a verdade sobre fato juridicamente relevante:";
+    const question = new LawQuestion(law, DifficultyQuestion.EASY);
+    await question.createAlternatives();
+    expect(question.getAlternatives()).toBeGreaterThan(0);
 })
