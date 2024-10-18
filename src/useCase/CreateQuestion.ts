@@ -1,22 +1,13 @@
-import axios from "axios";
 import * as cheerio from 'cheerio';
-import * as iconv from 'iconv-lite';  // Importa o iconv-lite
-import { DifficultyQuestion, LawQuestion } from "../question";
+import { DifficultyQuestion, LawQuestion } from "../entity/question";
+import LawQuestionRepository from "../infra/repository/QuestionRepository";
+import { ScrapData } from './ScrapSite';
 
 export class CreateQuestion {
-    constructor(readonly article: string) {}
+    constructor(readonly article: string, readonly getSite: ScrapData, readonly questionRepository: LawQuestionRepository) {}
 
     public async execute(): Promise<string> {
-        const res = await axios<Buffer>({
-            method: 'get',
-            url: "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm",
-            responseType: 'arraybuffer',
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-            }
-        });
-        const cp = iconv.decode(res.data, 'ISO-8859-1');
-        if (!cp) throw new Error("Failed to load data");       
+        const cp = await this.getSite.run();      
         const $ = cheerio.load(cp);
         let law: string[] = [];
         $("p").each((i, item) => {
@@ -25,9 +16,10 @@ export class CreateQuestion {
                 law.push(text);
             }
         });
-        const question = new LawQuestion(law[0], DifficultyQuestion.EASY);
+        const question = LawQuestion.create(law[0], DifficultyQuestion.EASY);
         question.createGapQuestion();
-        return question.getTemplate();
-        
+        question.createResponse();
+        await this.questionRepository.save(question);
+        return question.getId();       
     }
 }

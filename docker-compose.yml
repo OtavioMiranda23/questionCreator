@@ -1,0 +1,11 @@
+services:
+  postgres:
+    container_name: novo-nome-do-container
+    image: postgres:14.3
+    environment:
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: app
+    ports:
+      - "6005:5432"
+    volumes:
+      - ./create.sql:/docker-entrypoint-initdb.d/init.sql
