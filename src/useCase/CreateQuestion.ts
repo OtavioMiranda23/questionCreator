@@ -1,7 +1,8 @@
 import * as cheerio from 'cheerio';
-import { DifficultyQuestion, LawQuestion } from "../entity/question";
+import { DifficultyQuestion } from "../entity/LawQuestion";
 import LawQuestionRepository from "../infra/repository/QuestionRepository";
 import { ScrapData } from './ScrapSite';
+import { GapQuestion } from '../entity/GapQuestion';
 
 export class CreateQuestion {
     constructor(readonly article: string, readonly getSite: ScrapData, readonly questionRepository: LawQuestionRepository) {}
@@ -16,8 +17,8 @@ export class CreateQuestion {
                 law.push(text);
             }
         });
-        const question = LawQuestion.create(law[0], DifficultyQuestion.EASY);
-        question.createGapQuestion();
+        const question = GapQuestion.create(law[0], DifficultyQuestion.EASY);
+        question.createQuestion();
         question.createResponse();
         await this.questionRepository.save(question);
         return question.getId();       

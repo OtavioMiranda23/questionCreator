@@ -1,8 +1,9 @@
 import DatabaseConnection from "../../database/DatabaseConnection";
-import { LawQuestion } from "../../entity/question";
+import { GapQuestion } from "../../entity/GapQuestion";
+import { LawQuestion } from "../../entity/LawQuestion";
 
 export default interface LawQuestionRepository {
-    save (question: LawQuestion): Promise<void>;
+    save (question: GapQuestion): Promise<void>;
     getById (id: string): Promise<LawQuestion>;
 }
 
@@ -17,10 +18,10 @@ export class LawQuestionDatabase implements LawQuestionRepository {
         ]);        
     }
     
-    public async getById(id: string): Promise<LawQuestion> {
+    public async getById(id: string): Promise<GapQuestion> {
         const [question] = await this.connection?.query(
             "SELECT * FROM ccca.question WHERE question_id = $1", [id]);
         if (!question) throw new Error("Question not found");
-        return new LawQuestion(question.question_id, question.law, question.difficulty, question.article, Number(question.error_rate), Number(question.success_rate), question.question, question.response);	
+        return new GapQuestion(question.question_id, question.law, question.question, question.response, question.difficulty, question.article,question.error_rate, question.success_rate);	
     }
 }

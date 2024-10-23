@@ -7,9 +7,7 @@ export default class AnswerQuestion {
         readonly questionRepository: LawQuestionRepository
     ) {}
     
-    public async execute(): Promise<boolean> {
-        console.log(this.questionId);
-        
+    public async execute(): Promise<boolean> {       
         const question = await this.questionRepository.getById(this.questionId);
         return question.getResponse() === this.answer.trim();
     }
