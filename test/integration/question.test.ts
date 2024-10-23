@@ -1,8 +1,8 @@
-import { PgPromiseAdapter } from "../src/database/DatabaseConnection";
-import { LawQuestionDatabase } from "../src/infra/repository/QuestionRepository";
-import AnswerQuestion from "../src/useCase/AnswerQuestion";
-import { CreateQuestion } from "../src/useCase/CreateQuestion";
-import { ScrapSite } from "../src/useCase/ScrapSite";
+import { PgPromiseAdapter } from "../../src/database/DatabaseConnection";
+import { LawQuestionDatabase } from "../../src/infra/repository/QuestionRepository";
+import AnswerQuestion from "../../src/useCase/AnswerQuestion";
+import { CreateQuestion } from "../../src/useCase/CreateQuestion";
+import { ScrapSite } from "../../src/useCase/ScrapSite";
 
 let pg: PgPromiseAdapter;
 let questionDatabase: LawQuestionDatabase;
