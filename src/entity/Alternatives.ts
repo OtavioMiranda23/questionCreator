@@ -17,7 +17,7 @@ export default class Alternatives {
     async genarate () {        
         const regexVerbs =  /\b\w+(ar|er|ir)\b/g;
         const matchVerbs = this.law.getValue().match(regexVerbs);
-        if (!matchVerbs) throw new Error("Verbs not match");
+        if (!matchVerbs) throw new Error("Regex verbs not match");
         const res = await axios.get<string>(`https://www.sinonimos.com.br/${matchVerbs[0].toLowerCase()}/`);       
         if(!res.data) throw new Error("Word not found");
         const alternatives: string[] = [];        

@@ -1,9 +1,10 @@
-import { DifficultyQuestion, LawQuestion } from "./LawQuestion";
+import { GapQuestion } from "./GapQuestion";
+import { DifficultyQuestion, LawQuestion } from "./LawQuestion"
 import Article from "./ValueObjects/Article";
 import Law from "./ValueObjects/Law";
 import UUID from "./ValueObjects/UUID";
 
-export class GapQuestion extends LawQuestion {
+export default class PenaQuestion extends LawQuestion {
     constructor (
         id: string, 
         law: string, 
@@ -20,10 +21,10 @@ export class GapQuestion extends LawQuestion {
     static create (law: string, difficulty: DifficultyQuestion) {
         const uuid = UUID.create().getValue();
         const lawVO = Law.create(law).getValue();
-        return new GapQuestion(uuid, lawVO, "", "", difficulty, Article.create(law).getValue(), 0, 0);
+        return new PenaQuestion(uuid, lawVO, "", "", difficulty, Article.create(law).getValue(), 0, 0);
     }
-    createQuestion() {       
-        const regexVerbs =  /\b\w+(ar|er|ir)\b/g;
+    createQuestion() {
+        const regexVerbs =  /\b(reclusão|detenção)\b/gi;
         const match = this.law.getValue().match(regexVerbs);        
         if (!match) throw new Error("Regex verbs not match");
         const question  = this.law.getValue().replace(match[0], "_____");        
@@ -31,9 +32,9 @@ export class GapQuestion extends LawQuestion {
     }
 
     createResponse () {
-        const regexVerbs =  /\b\w+(ar|er|ir)\b/g;
-        const match = this.law.getValue().match(regexVerbs);
-        if (!match) throw new Error("Verbs not match");
+        const regexPena =  /\b(reclusão|detenção)\b/gi;
+        const match = this.law.getValue().match(regexPena);
+        if (!match) throw new Error("Pena not match");
         this.response = match[0].trim();
     }
 }

@@ -12,11 +12,10 @@ test("Deve criar uma questão de direito", () => {
 
 test("Deve dar erro ao criar a questão", () => {
     const noVerbsLaw = "aaaa";
-    expect(() => GapQuestion.create(noVerbsLaw, DifficultyQuestion.EASY)).toThrow("Verbs not found");
+    expect(() => GapQuestion.create(noVerbsLaw, DifficultyQuestion.EASY)).toThrow("Regex verbs not found");
     const emptyString = "";
     expect(() => GapQuestion.create(emptyString, DifficultyQuestion.EASY)).toThrow("Law not valid");
 })
-
 
 test("Deve criar uma resposta", () => {
     const law = "Art. 299 - Omitir, em documento público ou particular, declaração que dele devia constar, ou nele inserir ou fazer inserir declaração falsa ou diversa da que devia ser escrita, com o fim de prejudicar direito, criar obrigação ou alterar a verdade sobre fato juridicamente relevante:";
